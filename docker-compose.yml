@@ -1,0 +1,46 @@
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: carworkshop-psql
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: carworkshop-db
+    volumes:
+      - carworkshop_data:/var/lib/postgresql/data
+    networks:
+      - app-network
+
+  backend:
+    build: ./Backend
+    container_name: carworkshop-api
+    restart: always
+    environment:
+      ConnectionStrings__DefaultConnection: "Host=db;Port=5432;Database=carworkshop-db;Username=postgres;Password=mysecretpassword"
+      Jwt__Key: "super_secret_sauce_that_creates_tokens"
+      Jwt__Issuer: "car-workshop-api"
+      Jwt__Audience: "car-workshop-frontend"
+    depends_on:
+      - db
+    networks:
+      - app-network
+
+  frontend_proxy:
+    build: ./Frontend
+    container_name: carworkshop-nginx
+    restart: always
+    ports:
+      - "80:80"   # For HTTP 
+      # - "443:443" # For Https - enable it for prod 
+    depends_on:
+      - backend
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  carworkshop_data:
