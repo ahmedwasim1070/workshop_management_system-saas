@@ -12,6 +12,8 @@ public class Admin
 {
     public int Id { get; set; }
 
+    public Guid PublicId { get; set; } = Guid.NewGuid();
+
     [Required]
     public string FullName { get; set; } = string.Empty;
 
@@ -24,7 +26,7 @@ public class Admin
     public string? Password { get; set; } = string.Empty;
 
     [MaxLength(50)]
-    public string AuthProvider { get; set; } = string.Empty;
+    public AuthProvider Provider { get; set; } = AuthProvider.Local;
 
     [MaxLength(255)]
     public string ProviderId { get; set; } = string.Empty;

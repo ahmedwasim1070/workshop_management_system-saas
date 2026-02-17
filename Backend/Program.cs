@@ -11,18 +11,19 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 // Add the required things to understand controllers !
 builder.Services.AddControllers();
-// For Databse
+// For Databse - and also for passing the required configs like connection stirng
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(connectionString)
            .UseSnakeCaseNamingConvention());
 // Custom Confgis
+// For fetching errors and parsing them in a custom structured response
 builder.Services.Configure<ApiBehaviorOptions>(options =>
 {
     options.InvalidModelStateResponseFactory = context =>
     {
         var errors = context.ModelState
             .Where(e => e.Value?.Errors.Count > 0)
-            .SelectMany(x => x.Value.Errors)
+            .SelectMany(x => x.Value!.Errors)
             .Select(x => x.ErrorMessage)
             .ToList();
 
@@ -36,13 +37,15 @@ builder.Services.Configure<ApiBehaviorOptions>(options =>
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// For Dev Environment
 if (app.Environment.IsDevelopment())
 {
+    // For swagger ui
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
+// request protocol upgrade if available
 app.UseHttpsRedirection();
 
 // Scan files & folder to find routes

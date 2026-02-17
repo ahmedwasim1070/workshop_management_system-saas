@@ -1,4 +1,5 @@
 using System.Reflection;
+using Backend.Models;
 using Microsoft.EntityFrameworkCore;
 
 public class AppDbContext : DbContext
@@ -7,11 +8,13 @@ public class AppDbContext : DbContext
     {
     }
 
+    public DbSet<Admin> Admins { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
 
+        // Scan for IEntityTypeConfiguration configs
         modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
     }
 }

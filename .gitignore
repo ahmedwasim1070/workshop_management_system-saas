@@ -1,0 +1,86 @@
+# =========================
+# OPERATING SYSTEM FILES
+# =========================
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# =========================
+# IDE & EDITORS
+# =========================
+.vscode/
+.idea/
+*.swp
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# =========================
+# BACKEND (.NET / C#)
+# =========================
+# Build Results
+[Bb]in/
+[Oo]bj/
+
+# User-specific files
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# User-specific build configurations
+*.userprefs
+
+# Dotnet Core
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# ASP.NET Core Secrets & Config
+**/appsettings.Development.json
+**/appsettings.Production.json
+**/secrets.json
+
+# Entity Framework Migration XMLs (Rare, but good to ignore)
+*.edmx
+
+# =========================
+# FRONTEND (Next.js / React)
+# =========================
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Testing
+coverage/
+
+# Next.js Build Output
+.next/
+out/
+
+# Production Build
+build/
+dist/
+
+# Debug Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Environment Variables
+# ⚠️ SECURITY: Never commit API Keys!
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# =========================
+# MISC
+# =========================
+# Docker (Optional - if you have local override files)
+docker-compose.override.yml
