@@ -1,14 +1,27 @@
-# STAGE 1: Build
+# 1 - Copying source file to temporary build so SDK can compile it  
+# First acquire your project version
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
+# makes a dir at temporary enviroment and cd into it
 WORKDIR /src
+# copy this .csproj (project config file) to the temporary enviroment
 COPY ["Backend.csproj", "./"]
+# we created an /obj file - we created the obj file only by using this config file as it is 
+# not required to be updated when source files or others is updated can speed things up - cache
 RUN dotnet restore "Backend.csproj"
+# Now copy everything to the docker container folder
 COPY . .
+# Complile our project excluding the .csproj file that does not create /obj as we created already
+# and paste in the build/app/publish basically
 RUN dotnet publish "Backend.csproj" -c Release -o /app/publish
 
-# STAGE 2: Run
+# 2 - Copying the compiled version to the main enviroment that will host our app
+# Acquire the version image version acquires the image that we were workign on 
 FROM mcr.microsoft.com/dotnet/aspnet:9.0
+# make new dir /app in container
 WORKDIR /app
+# copy our compiled app in build/app/publish to app/publish
 COPY --from=build /app/publish .
+# expose this port so it can talk - for frontend
 EXPOSE 8080
+# entry points for the app to run
 ENTRYPOINT ["dotnet", "Backend.dll"]
