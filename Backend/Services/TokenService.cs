@@ -15,12 +15,12 @@ public class TokenServices
         _config = config;
     }
 
-    public string CreateToken(Admin user)
+    public string CreateToken(User user)
     {
         var claims = new List<Claim>
         {
             new Claim(JwtRegisteredClaimNames.Sub, user.PublicId.ToString()),
-            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),  // For jwt id
             new Claim(JwtRegisteredClaimNames.Email, user.Email),
             new Claim("provider", user.Provider.ToString()),
         };

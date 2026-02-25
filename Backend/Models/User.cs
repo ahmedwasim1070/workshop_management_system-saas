@@ -1,20 +1,29 @@
-using System.ComponentModel.DataAnnotations;
-
 namespace Backend.Models;
 
-public enum AuthProvider
+// List of roles 
+public enum Roles
+{
+    Admin,
+    Manager,
+    Employee
+}
+
+// List of auth providers
+public enum AuthProviders
 {
     Local,
     Google
 }
 
-public class Admin
+public class User
 {
     public int Id { get; set; }
 
+    [Required]
     public Guid PublicId { get; set; } = Guid.NewGuid();
 
     [Required]
+    [MaxLength(50)]
     public string FullName { get; set; } = string.Empty;
 
     [Required]
@@ -25,8 +34,13 @@ public class Admin
     [MaxLength(255)]
     public string? Password { get; set; } = string.Empty;
 
-    [MaxLength(50)]
-    public AuthProvider Provider { get; set; } = AuthProvider.Local;
+    [Required]
+    [MaxLength(20)]
+    public Roles Role { get; set; } = Roles.Employee;
+
+    [Required]
+    [MaxLength(20)]
+    public AuthProviders Provider { get; set; } = AuthProviders.Local;
 
     [MaxLength(255)]
     public string ProviderId { get; set; } = string.Empty;

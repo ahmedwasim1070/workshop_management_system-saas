@@ -1,4 +1,3 @@
-using System.Reflection.Metadata;
 using Backend.Common;
 using Backend.DTOs.Auth;
 using Backend.Models;
@@ -27,33 +26,73 @@ public class AuthControllers : ControllerBase
     {
         try
         {
-            var isUser = await _context.Admins.AnyAsync(u => u.Email == request.Email);
-            if (isUser)
-            {
+            var user = await _context.Users.AnyAsync(u => u.Email == request.Email);
+            if (user)
                 return Conflict(ApiResponse<Object>.Fail("Email already in use."));
-            }
 
             if (request.Password != request.ConfirmPassword)
-            {
-                return BadRequest(ApiResponse<Object>.Fail("Email already in use."));
-            }
+                return BadRequest(ApiResponse<Object>.Fail("Wrong Password and Confirm Password."));
 
             string hashedPassword = BCrypt.Net.BCrypt.HashPassword(request.Password);
-            var newAdmin = new Admin
+            var newUser = new User
             {
                 FullName = request.FullName,
                 Email = request.Email,
                 Password = hashedPassword
             };
 
-            _context.Admins.Add(newAdmin);
+            _context.Users.Add(newUser);
             await _context.SaveChangesAsync();
 
             return Ok(ApiResponse<Object>.Ok(null, "Successfully Created User."));
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-            return StatusCode(500, ApiResponse<Object>.Fail("Unkown Server Error."));
+            return StatusCode(500, ApiResponse<Object>.Fail(ex.Message));
+        }
+    }
+
+    [HttpGet("login")]
+    public async Task<ActionResult<ApiResponse<Object>>> Login(LoginRequestDto request)
+    {
+        try
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
+            if (user == null)
+                return NotFound(ApiResponse<Object>.Fail("User not found."));
+
+            if (!BCrypt.Net.BCrypt.Verify(request.Password, user.Password))
+                return Unauthorized(ApiResponse<Object>.Fail("Check your password and try again."));
+
+            var token = _tokenService.CreateToken(user);
+            var cookieOptions = new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.Strict,
+                Expires = DateTime.UtcNow.AddDays(7)
+            };
+
+            Response.Cookies.Append("auth", token, cookieOptions);
+            return Ok(ApiResponse<Object>.Ok(null, "Successfully Logged In."));
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, ApiResponse<Object>.Fail(ex.Message));
+        }
+    }
+
+    [HttpGet("zero")]
+    public async Task<ActionResult<ApiResponse<Object>>> Zero()
+    {
+
+        try
+        {
+            return Ok(ApiResponse<Object>.Ok(null, "Successfully Logged In."));
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, ApiResponse<Object>.Fail(ex.Message));
         }
     }
 }
