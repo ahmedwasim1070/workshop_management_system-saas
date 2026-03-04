@@ -1,12 +1,6 @@
-namespace Backend.Models;
+using System.ComponentModel.DataAnnotations;
 
-// List of roles 
-public enum Roles
-{
-    Admin,
-    Manager,
-    Employee
-}
+namespace Backend.Models;
 
 // List of auth providers
 public enum AuthProviders
@@ -19,7 +13,6 @@ public class User
 {
     public int Id { get; set; }
 
-    [Required]
     public Guid PublicId { get; set; } = Guid.NewGuid();
 
     [Required]
@@ -36,14 +29,10 @@ public class User
 
     [Required]
     [MaxLength(20)]
-    public Roles Role { get; set; } = Roles.Employee;
-
-    [Required]
-    [MaxLength(20)]
     public AuthProviders Provider { get; set; } = AuthProviders.Local;
 
     [MaxLength(255)]
-    public string ProviderId { get; set; } = string.Empty;
+    public string? ProviderId { get; set; } = string.Empty;
 
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 }

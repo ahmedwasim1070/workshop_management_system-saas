@@ -12,15 +12,16 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
 
         builder.HasKey(x => x.Id);
 
-        builder.Property(x => x.PublicId);
+        builder.Property(x => x.PublicId).IsRequired(true);
         builder.HasIndex(x => x.PublicId).IsUnique();
 
+        builder.Property(x => x.FullName).IsRequired(true).HasMaxLength(50);
+
+        builder.Property(x => x.Email).IsRequired(true).HasMaxLength(255);
         builder.HasIndex(x => x.Email).IsUnique();
 
-        builder.Property(x => x.Password).HasMaxLength(255).IsRequired(false);
+        builder.Property(x => x.Password).IsRequired(false).HasMaxLength(255);
 
-        builder.Property(x => x.Role).HasConversion<string>().HasMaxLength(15);
-
-        builder.Property(x => x.Provider).HasConversion<string>().HasMaxLength(15);
+        builder.Property(x => x.Provider).IsRequired(true).HasConversion<string>().HasMaxLength(20);
     }
 }

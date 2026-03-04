@@ -31,7 +31,7 @@ public class AuthControllers : ControllerBase
                 return Conflict(ApiResponse<Object>.Fail("Email already in use."));
 
             if (request.Password != request.ConfirmPassword)
-                return BadRequest(ApiResponse<Object>.Fail("Wrong Password and Confirm Password."));
+                return BadRequest(ApiResponse<Object>.Fail("Password and Confirm Password does not match."));
 
             string hashedPassword = BCrypt.Net.BCrypt.HashPassword(request.Password);
             var newUser = new User
@@ -82,7 +82,7 @@ public class AuthControllers : ControllerBase
         }
     }
 
-    [HttpGet("zero")]
+    [HttpGet("google")]
     public async Task<ActionResult<ApiResponse<Object>>> Zero()
     {
 
